@@ -395,12 +395,12 @@
               "[resourceId('Microsoft.Network/networkInterfaces','az801l06a-dc2-nic1')]",
               "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaceName'))]",
               "[resourceId('Microsoft.Compute/availabilitySets', parameters('availabilitySetName'))]"
-              "[resourceId('Microsoft.Resources/deployments'), 'UpdateVNetDNS']"
+              "[resourceId('Microsoft.Resources/deployments', 'UpdateVNetDNS')]"
             ],
             "properties": {
               "timeoutInSeconds": 1600,
               "source": {
-                  "script": "Install-WindowsFeature -Name AD-Domain-Services,DNS -IncludeManagementTools -Force; Get-Disk | Where-Object PartitionStyle -eq 'RAW' | Initialize-Disk -PartitionStyle MBR -PassThru | New-Partition -UseMaximumSize -DriveLetter F | Format-Volume -FileSystem NTFS -Confirm:$false -Force; $cred = [System.Management.Automation.PSCredential]::new(\"[parameters('adminUsername')]\", ( ConvertTo-SecureString -String \"[parameters('adminPassword')]\" -AsPlainText -Force) ); Add-Computer -DomainName \"[parameters('domainName')]\" -Credential $cred"
+                  "script": "[format('Install-WindowsFeature -Name AD-Domain-Services,DNS -IncludeManagementTools -Force; Get-Disk | Where-Object PartitionStyle -eq \"RAW\" | Initialize-Disk -PartitionStyle MBR -PassThru | New-Partition -UseMaximumSize -DriveLetter F | Format-Volume -FileSystem NTFS -Confirm:$false -Force; $cred = [System.Management.Automation.PSCredential]::new(\"{0}\", ( ConvertTo-SecureString -String \"{1}\" -AsPlainText -Force) ); Add-Computer -DomainName \"{2}\" -Credential $cred',parameters('adminUsername'), parameters('adminPassword'), parameters('domainName'))]"
               } 
             }
         }
